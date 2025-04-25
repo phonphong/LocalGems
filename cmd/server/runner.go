@@ -1,17 +1,41 @@
 package main
+
 import (
-	"github.com/gin-gonic/gin"
 	"localgems/config"
+	"localgems/internal/app/usecases"
+	"localgems/internal/infra/db"
+	"localgems/internal/infra/repositories"
+	"localgems/internal/interfaces/api/controllers/handlers"
+	"localgems/internal/interfaces/api/routes"
+	"log"
 )
 
 func main() {
-	config.ConnectDatabase()
-	config.DB.AutoMigrate(&model.Place{}, &model.Photo{}, &model.Review{})
+	// Load config
+	cfg := config.NewConfig()
 
-	r := gin.Default()
+	// Initialize database
+	db, err := db.NewSQLiteConnection(cfg.DBPath)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
 
-	r.GET("/places", handler.GetPlaces)
-	r.GET("/places/:id", handler.GetPlaceByID)
+	// Setup repositories
+	coffeeRepo := repositories.NewSQLiteCafeRepository(db)
 
-	r.Run(":8080")
+	// Setup usecases
+	coffeeUsecase := usecases.NewCoffeeUsecase(coffeeRepo)
+
+	// Setup handlers
+	coffeeHandler := handlers.NewCoffeeHandler(coffeeUsecase)
+
+	// Setup router
+	router := routes.SetupRouter(coffeeHandler)
+
+	// Start server
+	log.Printf("Server starting on %s", cfg.ServerAddress)
+	if err := router.Run(cfg.ServerAddress); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
