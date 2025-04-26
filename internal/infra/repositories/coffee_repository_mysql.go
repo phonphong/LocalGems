@@ -13,7 +13,6 @@ func NewMySQLCoffeeRepository(db *sql.DB) CoffeeRepository {
 	return &MySQLCoffeeRepository{DB: db}
 }
 
-// FindAll - Lấy toàn bộ cafe
 func (r *MySQLCoffeeRepository) FindAll() ([]entity.Coffee, error) {
 	rows, err := r.DB.Query("SELECT id, name, rating, reviews, price_range, type, address, review_text FROM coffees")
 	if err != nil {
@@ -43,7 +42,7 @@ func (r *MySQLCoffeeRepository) FindAll() ([]entity.Coffee, error) {
 	return coffees, nil
 }
 
-// FindByID - Tìm cafe theo ID
+// FindByID
 func (r *MySQLCoffeeRepository) FindByID(id int) (*entity.Coffee, error) {
 	var coffee entity.Coffee
 	err := r.DB.QueryRow("SELECT id, name, rating, reviews, price_range, type, address, review_text FROM coffees WHERE id = ?", id).
@@ -66,7 +65,7 @@ func (r *MySQLCoffeeRepository) FindByID(id int) (*entity.Coffee, error) {
 	return &coffee, nil
 }
 
-// Create - Tạo mới cafe
+// Create
 func (r *MySQLCoffeeRepository) Create(coffee *entity.Coffee) (int, error) {
 	result, err := r.DB.Exec(
 		"INSERT INTO coffees (name, rating, reviews, price_range, type, address, review_text) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -90,7 +89,7 @@ func (r *MySQLCoffeeRepository) Create(coffee *entity.Coffee) (int, error) {
 	return int(insertedID), nil
 }
 
-// Update - Cập nhật cafe theo ID
+// Update
 func (r *MySQLCoffeeRepository) Update(id int, coffee *entity.Coffee) error {
 	_, err := r.DB.Exec(
 		"UPDATE coffees SET name = ?, rating = ?, reviews = ?, price_range = ?, type = ?, address = ?, review_text = ? WHERE id = ?",
@@ -106,13 +105,13 @@ func (r *MySQLCoffeeRepository) Update(id int, coffee *entity.Coffee) error {
 	return err
 }
 
-// Delete - Xóa cafe theo ID
+// Delete
 func (r *MySQLCoffeeRepository) Delete(id int) error {
 	_, err := r.DB.Exec("DELETE FROM coffees WHERE id = ?", id)
 	return err
 }
 
-// Search - Tìm cafe theo từ khóa
+// Search
 func (r *MySQLCoffeeRepository) Search(query string) ([]entity.Coffee, error) {
 	rows, err := r.DB.Query(
 		"SELECT id, name, rating, reviews, price_range, type, address, review_text FROM coffee WHERE name LIKE ? OR address LIKE ?",

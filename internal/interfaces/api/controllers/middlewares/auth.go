@@ -1,4 +1,3 @@
-// File: internal/interfaces/api/middlewares/middlewares.go
 package middlewares
 
 import (
@@ -12,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Auth là middleware xác thực token JWT
+// token JWT
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -22,7 +21,7 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 
-		// Kiểm tra Bearer token
+		// Bearer token
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "authorization header format must be Bearer {token}"})
@@ -31,24 +30,20 @@ func Auth() gin.HandlerFunc {
 		}
 
 		token := parts[1]
-		// Đây là nơi để thêm logic xác thực token
-		// Ví dụ: validateToken(token)
+		//
+		// validateToken(token)
 
-		// Cho phép tiếp tục nếu token hợp lệ
 		if token == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			c.Abort()
 			return
 		}
 
-		// Có thể lưu thông tin người dùng vào context
-		// c.Set("user_id", userID)
-
 		c.Next()
 	}
 }
 
-// Logger là middleware ghi log request
+// Logger
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
@@ -73,7 +68,7 @@ func Logger() gin.HandlerFunc {
 	}
 }
 
-// CORS là middleware xử lý Cross-Origin Resource Sharing
+// CORS
 func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -90,16 +85,13 @@ func CORS() gin.HandlerFunc {
 	}
 }
 
-// ErrorHandler là middleware bắt và xử lý lỗi toàn cục
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
-		// Chỉ xử lý lỗi nếu có lỗi và response chưa được gửi
 		if len(c.Errors) > 0 && !c.Writer.Written() {
 			err := c.Errors.Last().Err
 
-			// Gửi response lỗi mặc định
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
@@ -107,15 +99,13 @@ func ErrorHandler() gin.HandlerFunc {
 	}
 }
 
-// Recovery là middleware xử lý panic và ghi log
 func Recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				// Log lỗi panic
+
 				log.Printf("Panic recovered: %v\n%s", err, debug.Stack())
 
-				// Trả về lỗi 500 cho client
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"error": "Internal server error",
 				})
@@ -126,7 +116,6 @@ func Recovery() gin.HandlerFunc {
 	}
 }
 
-// RateLimiter là struct để kiểm soát số lượng requests
 type RateLimiter struct {
 	ips    map[string]int64
 	mutex  sync.Mutex
@@ -134,7 +123,6 @@ type RateLimiter struct {
 	window time.Duration
 }
 
-// NewRateLimiter tạo một rate limiter mới
 func NewRateLimiter(limit int, window time.Duration) *RateLimiter {
 	return &RateLimiter{
 		ips:    make(map[string]int64),
@@ -143,7 +131,6 @@ func NewRateLimiter(limit int, window time.Duration) *RateLimiter {
 	}
 }
 
-// RateLimit là middleware giới hạn số lượng requests
 func (rl *RateLimiter) RateLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ip := c.ClientIP()
@@ -152,14 +139,12 @@ func (rl *RateLimiter) RateLimit() gin.HandlerFunc {
 		rl.mutex.Lock()
 		defer rl.mutex.Unlock()
 
-		// Xóa các entries cũ
 		for key, timestamp := range rl.ips {
 			if now-timestamp > rl.window.Nanoseconds() {
 				delete(rl.ips, key)
 			}
 		}
 
-		// Kiểm tra và cập nhật lượt truy cập
 		count := 0
 		for existingIP := range rl.ips {
 			if existingIP == ip {
@@ -173,7 +158,6 @@ func (rl *RateLimiter) RateLimit() gin.HandlerFunc {
 			return
 		}
 
-		// Thêm truy cập mới
 		rl.ips[ip+":"+time.Now().String()] = now
 
 		c.Next()

@@ -11,11 +11,11 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		DBUser:        "root",      // user MySQL của XAMPP
-		DBPassword:    "",          // mật khẩu XAMPP, mặc định là rỗng
-		DBHost:        "127.0.0.1", // localhost
-		DBPort:        "3306",      // port MySQL
-		DBName:        "localgems", // tên database bạn đã tạo
-		ServerAddress: ":8080",     // port server Go
+		DBUser:        "root",
+		DBPassword:    "",
+		DBHost:        "127.0.0.1",
+		DBPort:        "3306",
+		DBName:        "localgems",
+		ServerAddress: ":8080",
 	}
 }

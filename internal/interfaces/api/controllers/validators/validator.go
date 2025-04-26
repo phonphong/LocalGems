@@ -5,7 +5,6 @@ import (
 	"regexp"
 )
 
-// Cung cấp các helpers cho validation
 func ValidateEmail(email string) error {
 	// Simple email validation
 	re := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
