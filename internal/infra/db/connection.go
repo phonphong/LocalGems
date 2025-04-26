@@ -2,39 +2,29 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"localgems/config"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func NewSQLiteConnection(dbPath string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", dbPath)
+func NewMySQLConnection(cfg *config.Config) (*sql.DB, error) {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		cfg.DBUser,
+		cfg.DBPassword,
+		cfg.DBHost,
+		cfg.DBPort,
+		cfg.DBName,
+	)
+
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
-
-	// Initialize schema
-	if err = initSchema(db); err != nil {
+	if err := db.Ping(); err != nil {
 		return nil, err
 	}
 
 	return db, nil
-}
-
-func initSchema(db *sql.DB) error {
-	createTableSQL := `
-	CREATE TABLE IF NOT EXISTS cafes (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL,
-		rating REAL,
-		reviews INTEGER,
-		price_range TEXT,
-		type TEXT,
-		address TEXT,
-		review_text TEXT
-	);`
-
-	_, err := db.Exec(createTableSQL)
-	return err
 }

@@ -1,25 +1,21 @@
 package config
 
-import "os"
-
 type Config struct {
-	DBPath        string
+	DBUser        string
+	DBPassword    string
+	DBHost        string
+	DBPort        string
+	DBName        string
 	ServerAddress string
 }
 
 func NewConfig() *Config {
-	dbPath := os.Getenv("DB_PATH")
-	if dbPath == "" {
-		dbPath = "./coffee.db"
-	}
-
-	serverAddress := os.Getenv("SERVER_ADDRESS")
-	if serverAddress == "" {
-		serverAddress = ":8080"
-	}
-
 	return &Config{
-		DBPath:        dbPath,
-		ServerAddress: serverAddress,
+		DBUser:        "root",      // user MySQL của XAMPP
+		DBPassword:    "",          // mật khẩu XAMPP, mặc định là rỗng
+		DBHost:        "127.0.0.1", // localhost
+		DBPort:        "3306",      // port MySQL
+		DBName:        "localgems", // tên database bạn đã tạo
+		ServerAddress: ":8080",     // port server Go
 	}
 }

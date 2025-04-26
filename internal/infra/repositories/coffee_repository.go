@@ -1,12 +1,12 @@
 package repositories
 
-import models "localgems/internal/core/entity"
+import "localgems/internal/core/entity"
 
 type CoffeeRepository interface {
-	FindAll() ([]models.Coffee, error)
-	FindByID(id int) (*models.Coffee, error)
-	Create(coffee *models.Coffee) (int, error)
-	Update(id int, coffee *models.Coffee) error
+	FindAll() ([]entity.Coffee, error)
+	FindByID(id int) (*entity.Coffee, error)
+	Create(coffee *entity.Coffee) (int, error)
+	Update(id int, coffee *entity.Coffee) error
 	Delete(id int) error
-	Search(query string) ([]models.Coffee, error)
+	Search(query string) ([]entity.Coffee, error)
 }

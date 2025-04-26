@@ -1,77 +1,74 @@
 package usecases
 
 import (
-	models "localgems/internal/core/entity"
+	
+	"localgems/internal/core/entity"
 	"localgems/internal/infra/repositories"
+	"localgems/internal/core/errors"
 )
 
-type CafeUsecase interface {
-	GetAllCafes() ([]models.Cafe, error)
-	GetCafeByID(id int) (*models.Cafe, error)
-	CreateCafe(cafe *models.Cafe) (int, error)
-	UpdateCafe(id int, cafe *models.Cafe) error
-	DeleteCafe(id int) error
-	SearchCafes(query string) ([]models.Cafe, error)
+type CoffeeUsecase interface {
+	GetAllCoffees() ([]entity.Coffee, error)
+	GetCoffeeByID(id int) (*entity.Coffee, error)
+	CreateCoffee(coffee *entity.Coffee) (int, error)
+	UpdateCoffee(id int, coffee *entity.Coffee) error
+	DeleteCoffee(id int) error
+	SearchCoffees(query string) ([]entity.Coffee, error)
 }
 
-type cafeUsecase struct {
-	cafeRepo repositories.CafeRepository
+type coffeeUsecase struct {
+	coffeeRepo repositories.CoffeeRepository
 }
 
-func NewCafeUsecase(repo repositories.CafeRepository) CafeUsecase {
-	return &cafeUsecase{
-		cafeRepo: repo,
+func NewCoffeeUsecase(repo repositories.CoffeeRepository) CoffeeUsecase {
+	return &coffeeUsecase{
+		coffeeRepo: repo,
 	}
 }
 
-func (u *cafeUsecase) GetAllCafes() ([]models.Cafe, error) {
-	return u.cafeRepo.FindAll()
+func (u *coffeeUsecase) GetAllCoffees() ([]entity.Coffee, error) {
+	return u.coffeeRepo.FindAll()
 }
 
-func (u *cafeUsecase) GetCafeByID(id int) (*models.Cafe, error) {
-	cafe, err := u.cafeRepo.FindByID(id)
+func (u *coffeeUsecase) GetCoffeeByID(id int) (*entity.Coffee, error) {
+	coffee, err := u.coffeeRepo.FindByID(id)
 	if err != nil {
-		return nil, errors.NewNotFoundError("cafe not found")
+		return nil, errors.NewNotFoundError("coffee not found")
 	}
-	return cafe, nil
+	return coffee, nil
 }
 
-func (u *cafeUsecase) CreateCafe(cafe *models.Cafe) (int, error) {
-	// Validate cafe if needed
-	if cafe.Name == "" {
+func (u *coffeeUsecase) CreateCoffee(coffee *entity.Coffee) (int, error) {
+	if coffee.Name == "" {
 		return 0, errors.NewValidationError("name is required")
 	}
-	return u.cafeRepo.Create(cafe)
+	return u.coffeeRepo.Create(coffee)
 }
 
-func (u *cafeUsecase) UpdateCafe(id int, cafe *models.Cafe) error {
-	// Check if cafe exists
-	_, err := u.cafeRepo.FindByID(id)
+func (u *coffeeUsecase) UpdateCoffee(id int, coffee *entity.Coffee) error {
+	_, err := u.coffeeRepo.FindByID(id)
 	if err != nil {
-		return errors.NewNotFoundError("cafe not found")
+		return errors.NewNotFoundError("coffee not found")
 	}
 
-	// Validate cafe if needed
-	if cafe.Name == "" {
+	if coffee.Name == "" {
 		return errors.NewValidationError("name is required")
 	}
 
-	return u.cafeRepo.Update(id, cafe)
+	return u.coffeeRepo.Update(id, coffee)
 }
 
-func (u *cafeUsecase) DeleteCafe(id int) error {
-	// Check if cafe exists
-	_, err := u.cafeRepo.FindByID(id)
+func (u *coffeeUsecase) DeleteCoffee(id int) error {
+	_, err := u.coffeeRepo.FindByID(id)
 	if err != nil {
-		return errors.NewNotFoundError("cafe not found")
+		return errors.NewNotFoundError("coffee not found")
 	}
-
-	return u.cafeRepo.Delete(id)
+	return u.coffeeRepo.Delete(id)
 }
 
-func (u *cafeUsecase) SearchCafes(query string) ([]models.Cafe, error) {
+func (u *coffeeUsecase) SearchCoffees(query string) ([]entity.Coffee, error) {
 	if query == "" {
 		return nil, errors.NewValidationError("search query is required")
 	}
-	return u.cafeRepo.Search(query)
+	return u.coffeeRepo.Search(query)
 }
