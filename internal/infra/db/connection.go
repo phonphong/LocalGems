@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"localgems/config"
+	"local-gems-server/config"
 
 	_ "github.com/go-sql-driver/mysql"
 )

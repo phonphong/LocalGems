@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *CoffeeHandler) GetAllCoffees(c *gin.Context) {
-	coffees, err := h.coffeeUsecase.GetAllCoffees()
+func (h *LocalHandler) GetAllLocals(c *gin.Context) {
+	locals, err := h.localUsecase.GetAllLocals()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, coffees)
+	c.JSON(http.StatusOK, locals)
 }

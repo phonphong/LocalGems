@@ -1,8 +1,9 @@
 package validators
 
 import (
-	"localgems/internal/core/errors"
+	"local-gems-server/internal/core/errors"
 	"regexp"
+	"strconv"
 )
 
 func ValidateEmail(email string) error {
@@ -16,7 +17,7 @@ func ValidateEmail(email string) error {
 
 func ValidateLength(value string, min, max int) error {
 	if len(value) < min || len(value) > max {
-		return errors.NewValidationError("value length must be between " + string(min) + " and " + string(max))
+		return errors.NewValidationError("value length must be between " + strconv.Itoa(min) + " and " + strconv.Itoa(max))
 	}
 	return nil
 }

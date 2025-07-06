@@ -5,11 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"localgems/internal/interfaces/api/controllers/handlers"
-	"localgems/internal/interfaces/api/controllers/middlewares"
+	"local-gems-server/internal/interfaces/api/controllers/handlers"
+	"local-gems-server/internal/interfaces/api/controllers/middlewares"
 )
 
-func SetupRouter(coffeeHandler *handlers.CoffeeHandler) *gin.Engine {
+func SetupRouter(localHandler *handlers.LocalHandler) *gin.Engine {
 
 	router := gin.New()
 
@@ -24,20 +24,20 @@ func SetupRouter(coffeeHandler *handlers.CoffeeHandler) *gin.Engine {
 	api := router.Group("/api/v1")
 	{
 
-		coffees := api.Group("/coffees")
+		locals := api.Group("/locals")
 		{
 			// Public endpoints
-			coffees.GET("", coffeeHandler.GetAllCoffees)
-			coffees.GET("/:id", coffeeHandler.GetCoffeeByID)
-			coffees.GET("/search", coffeeHandler.SearchCoffees)
+			locals.GET("", localHandler.GetAllLocals)
+			locals.GET("/:id", localHandler.GetLocalByID)
+			locals.GET("/search", localHandler.SearchLocals)
 
 			// Protected endpoints
-			authRoutes := coffees.Group("/")
+			authRoutes := locals.Group("/")
 			authRoutes.Use(middlewares.Auth()) // Áp dụng Auth middleware chỉ cho routes này
 			{
-				authRoutes.POST("", coffeeHandler.CreateCoffee)
-				authRoutes.PUT("/:id", coffeeHandler.UpdateCoffee)
-				authRoutes.DELETE("/:id", coffeeHandler.DeleteCoffee)
+				authRoutes.POST("", localHandler.CreateLocal)
+				authRoutes.PUT("/:id", localHandler.UpdateLocal)
+				authRoutes.DELETE("/:id", localHandler.DeleteLocal)
 			}
 		}
 	}

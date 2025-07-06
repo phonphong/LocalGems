@@ -1,15 +1,15 @@
 package handlers
 
 import (
-	"localgems/internal/core/entity"
-	"localgems/internal/core/errors"
+	"local-gems-server/internal/core/entity"
+	"local-gems-server/internal/core/errors"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *CoffeeHandler) UpdateCoffee(c *gin.Context) {
+func (h *LocalHandler) UpdateLocal(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -17,13 +17,13 @@ func (h *CoffeeHandler) UpdateCoffee(c *gin.Context) {
 		return
 	}
 
-	var coffee entity.Coffee
-	if err := c.ShouldBindJSON(&coffee); err != nil {
+	var local entity.Local
+	if err := c.ShouldBindJSON(&local); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err = h.coffeeUsecase.UpdateCoffee(id, &coffee)
+	err = h.localUsecase.UpdateLocal(id, &local)
 	if err != nil {
 		switch err.(type) {
 		case *errors.NotFoundError:
@@ -36,6 +36,6 @@ func (h *CoffeeHandler) UpdateCoffee(c *gin.Context) {
 		return
 	}
 
-	coffee.ID = id
-	c.JSON(http.StatusOK, coffee)
+	local.ID = id
+	c.JSON(http.StatusOK, local)
 }

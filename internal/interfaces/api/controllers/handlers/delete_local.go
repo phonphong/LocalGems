@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"localgems/internal/core/errors"
+	"local-gems-server/internal/core/errors"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *CoffeeHandler) DeleteCoffee(c *gin.Context) {
+func (h *LocalHandler) DeleteLocal(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -16,7 +16,7 @@ func (h *CoffeeHandler) DeleteCoffee(c *gin.Context) {
 		return
 	}
 
-	err = h.coffeeUsecase.DeleteCoffee(id)
+	err = h.localUsecase.DeleteLocal(id)
 	if err != nil {
 		if _, ok := err.(*errors.NotFoundError); ok {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -26,5 +26,5 @@ func (h *CoffeeHandler) DeleteCoffee(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "coffee deleted successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "local deleted successfully"})
 }

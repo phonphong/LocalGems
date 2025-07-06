@@ -2,27 +2,27 @@ package handlers
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 
-"localgems/internal/app/usecases"
-"localgems/internal/core/errors"
-
+	"local-gems-server/internal/app/usecases"
+	"local-gems-server/internal/core/errors"
 )
 
-type CoffeeHandler struct {
-	coffeeUsecase usecases.CoffeeUsecase
+type LocalHandler struct {
+	localUsecase usecases.LocalUsecase
 }
 
-func NewCoffeeHandler(usecase usecases.CoffeeUsecase) *CoffeeHandler {
-	return &CoffeeHandler{
-		coffeeUsecase: usecase,
+func NewLocalHandler(usecase usecases.LocalUsecase) *LocalHandler {
+	return &LocalHandler{
+		localUsecase: usecase,
 	}
 }
 
-func (h *CoffeeHandler) SearchCoffees(c *gin.Context) {
+func (h *LocalHandler) SearchLocals(c *gin.Context) {
 	query := c.Query("q")
-	
-	coffees, err := h.coffeeUsecase.SearchCoffees(query)
+
+	locals, err := h.localUsecase.SearchLocals(query)
 	if err != nil {
 		if _, ok := err.(*errors.ValidationError); ok {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -32,5 +32,5 @@ func (h *CoffeeHandler) SearchCoffees(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, coffees)
+	c.JSON(http.StatusOK, locals)
 }

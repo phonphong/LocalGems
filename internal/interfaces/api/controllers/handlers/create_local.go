@@ -1,21 +1,21 @@
 package handlers
 
 import (
-	"localgems/internal/core/entity"
-	"localgems/internal/core/errors"
+	"local-gems-server/internal/core/entity"
+	"local-gems-server/internal/core/errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *CoffeeHandler) CreateCoffee(c *gin.Context) {
-	var coffee entity.Coffee
-	if err := c.ShouldBindJSON(&coffee); err != nil {
+func (h *LocalHandler) CreateLocal(c *gin.Context) {
+	var local entity.Local
+	if err := c.ShouldBindJSON(&local); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	id, err := h.coffeeUsecase.CreateCoffee(&coffee)
+	id, err := h.localUsecase.CreateLocal(&local)
 	if err != nil {
 		if _, ok := err.(*errors.ValidationError); ok {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -25,6 +25,6 @@ func (h *CoffeeHandler) CreateCoffee(c *gin.Context) {
 		return
 	}
 
-	coffee.ID = id
-	c.JSON(http.StatusCreated, coffee)
+	local.ID = id
+	c.JSON(http.StatusCreated, local)
 }
